@@ -1,0 +1,17 @@
+
+Try initialize
+
+    >>> from inigo.tracxmlrpc.rpc import *
+    >>> URI = 'http://example.org/trac/project'
+    >>> USERNAME = 'user'
+    >>> PASSWORD = 'password'
+    >>> conf = TracConfig(URI,USERNAME,PASSWORD)
+    >>> conf.get_xmlrpc_uri()
+    'http://user:password@example.org/trac/project/login/xmlrpc'
+
+Check the returned URIs
+
+    >>> conf.get_uristring()
+    'http://user:password@example.org/trac/project'
+    >>> conf.get_xmlrpc_uri()
+    'http://user:password@example.org/trac/project/login/xmlrpc'
