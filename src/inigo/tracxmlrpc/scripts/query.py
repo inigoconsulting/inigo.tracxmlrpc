@@ -33,7 +33,7 @@ def main():
     else:
         tickets = ticketrpc.query()
 
-    for ticket in tickets:
+    for ticket in sorted(tickets, key=lambda x: x.id, reverse=True):
         print '#%s\t| %s' % (ticket.id, ticket.summary)
     
 

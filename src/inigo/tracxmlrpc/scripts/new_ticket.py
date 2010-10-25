@@ -56,11 +56,11 @@ def main():
     
     tid = ticket_server.create(summary,description, 
                                 component=component,
+                                milestone=milestone,
                                 estimatedhours=estimatedhours)
 
     ticket = ticket_server.get(tid)
 
-    print ticket.data
     print "\nTicket created at %s/ticket/%s" % (BASE % dict(project=project),tid)
 
 if __name__ == "__main__":

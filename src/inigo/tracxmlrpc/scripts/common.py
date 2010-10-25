@@ -4,6 +4,12 @@ import tempfile
 
 from argparse import ArgumentParser
 
+def indent(text):
+    result = []
+    for l in text.split('\n'):
+        result.append('  | ' + l)
+    return '\n'.join(result)
+
 def editor_input(message):
     ignorestart = '--This line, and those below, will be ignored--'
     tmp = tempfile.mktemp(suffix='.tmp',prefix='tracrpc')

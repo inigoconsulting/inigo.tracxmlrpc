@@ -1,15 +1,7 @@
 from inigo.tracxmlrpc.rpc import TracConfig, TracTicketXMLRPC
-from inigo.tracxmlrpc.scripts.common import get_parser
+from inigo.tracxmlrpc.scripts.common import get_parser, indent
 import getpass
 BASE="https://dev.inigo-tech.com/trac/%(project)s"
-
-import re
-
-def indent(text):
-    result = []
-    for l in text.split('\n'):
-        result.append('  | ' + l)
-    return '\n'.join(result)
 
 def main():
     parser = get_parser()

@@ -44,6 +44,7 @@ setup(name='inigo.tracxmlrpc',
             'new = inigo.tracxmlrpc.scripts.new_ticket:main',
             'query = inigo.tracxmlrpc.scripts.query:main',
             'view = inigo.tracxmlrpc.scripts.view:main',
+            'update = inigo.tracxmlrpc.scripts.update:main',
         ]
       }
       )

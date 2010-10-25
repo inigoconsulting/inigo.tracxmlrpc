@@ -6,7 +6,10 @@ import tempfile
 
 from urlparse import urlparse
 
-class TracError(Exception): pass
+class TracError(Exception):
+    def __init__(self, code, message):
+        self.code = code
+        self.message = message
 
 class TracConfig(object):
 
@@ -49,6 +52,14 @@ class TracTicket(object):
         for c in changelogs:
             if isinstance(c, TracComment):
                 yield c
+
+    def update(self, message, **options):
+        rpc = TracTicketXMLRPC(self.config)
+        rpc.update(self.id, message, **options)
+
+    def available_actions(self):
+        rpc = TracTicketXMLRPC(self.config)
+        return rpc.available_actions(self.ticket_id)
         
 
 class TracChangeLog(object):
@@ -88,7 +99,13 @@ class TracTicketXMLRPC(object):
         self._conn = xmlrpclib.ServerProxy(self.config.get_xmlrpc_uri())
 
     def components(self):
-        return self._conn.ticket.component.getAll()
+        try:
+            return self._conn.ticket.component.getAll()
+        except xmlrpclib.ProtocolError,e:
+            raise TracError(e.errcode,e.errmsg)
+
+    def available_actions(self, ticket_id):
+        return self._conn.ticket.getActions(ticket_id)
 
     def milestones(self):
         return self._conn.ticket.milestone.getAll()
@@ -98,13 +115,17 @@ class TracTicketXMLRPC(object):
                                         True)
         return ticket_id
 
-    def get(self, id):
-        ticket = self._conn.ticket.get(id)
+    def get(self, ticket_id):
+        ticket = self._conn.ticket.get(ticket_id)
         return TracTicket(self.config, *ticket)
 
-    def changelog(self, id):
-        changelogs = self._conn.ticket.changeLog(id)
+    def changelog(self, ticket_id):
+        changelogs = self._conn.ticket.changeLog(ticket_id)
         return [changelog_factory(self.config, *cl) for cl in changelogs]
+
+    def update(self, ticket_id, comment, **options):
+        ticket = self._conn.ticket.update(ticket_id, comment, options, True)
+        return TracTicket(self.config, *ticket)
 
     def query(self, *strfilters, **optfilters):
         filterlist = []
