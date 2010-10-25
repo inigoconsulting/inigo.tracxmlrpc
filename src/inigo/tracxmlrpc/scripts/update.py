@@ -50,7 +50,8 @@ def main():
 
     ticket = ticket_server.get(args.ticket_id)
 
-    print "Ticket: %s" % (ticket.url)
+    print "URL: %s" % (ticket.url)
+    print "Summary: %s" % (ticket.summary)
  
     available_actions = list(action_keys(ticket_server.available_actions(
                                         args.ticket_id)))
@@ -77,8 +78,10 @@ def main():
        return
     
     #propertykeys = ['status', 'totalhours', 'description', 'reporter', 'cc', 'milestone', 'component', 'summary', 'hours', 'owner', 'internal', 'billable', 'keywords', 'estimatedhours', 'type', 'priority']
-    
-    ticket.update(comment, hours=hours, action=args.action)
+    if args.action:
+        ticket.update(comment, hours=hours, action=args.action)
+    else:
+        ticket.update(comment, hours=hours)
 
     print "\nTicket %s updated" % ticket.url
 
