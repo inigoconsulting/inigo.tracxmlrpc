@@ -4,6 +4,16 @@ import tempfile
 
 from argparse import ArgumentParser
 
+COLOR_MAP = {
+   'red': 31,
+   'green': 32,
+   'yellow': 33,
+   'blue': 34,
+   'purple': 35,
+   'white': 1
+}
+
+
 def indent(text):
     result = []
     for l in text.split('\n'):
@@ -47,3 +57,19 @@ def get_parser():
     parser.add_argument('-p', '--password', dest='password',
                 help='Your trac login password')
     return parser
+
+def colored(text, color='default', bold=False):
+    b = 0
+    if bold:
+       b = 1
+    if color != 'default':
+        c = COLOR_MAP[color]
+        return '\x1b[%(bold)s;%(color)sm%(text)s\x1b[0m' % dict(
+                                                          bold=b,
+                                                          color=c,
+                                                          text=text)
+    elif bold:
+        return '\x1b[%(bold)s;%(text)s\x1b[0m' % dict(bold=b, text=text)
+
+    else:
+        return text

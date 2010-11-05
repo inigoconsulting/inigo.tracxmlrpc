@@ -43,8 +43,8 @@ setup(name='inigo.tracxmlrpc',
         'console_scripts': [
             'new = inigo.tracxmlrpc.scripts.new_ticket:main',
             'query = inigo.tracxmlrpc.scripts.query:main',
-            'view = inigo.tracxmlrpc.scripts.view:main',
             'update = inigo.tracxmlrpc.scripts.update:main',
+            'timeonly = inigo.tracxmlrpc.scripts.add_time:main',
         ]
       }
       )
