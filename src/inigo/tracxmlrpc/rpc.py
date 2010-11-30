@@ -6,10 +6,28 @@ import tempfile
 
 from urlparse import urlparse
 
+def catch_errors(func):
+    def decorated(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except xmlrpclib.Fault, e:
+            raise
+        except xmlrpclib.Error, e:
+            code = getattr(e, 'errcode', None)
+            mesg = getattr(e, 'errmsg', None)
+            raise TracError(code, mesg)
+    return decorated
+
 class TracError(Exception):
     def __init__(self, code, message):
         self.code = code
         self.message = message
+
+    def __repr__(self):
+        return "%s %s" % (self.code, self.message)
+
+    def __str__(self):
+        return "%s %s" % (self.code, self.message)
 
 class TracConfig(object):
 
@@ -98,35 +116,40 @@ class TracTicketXMLRPC(object):
         self.config = config
         self._conn = xmlrpclib.ServerProxy(self.config.get_xmlrpc_uri())
 
+    @catch_errors
     def components(self):
-        try:
-            return self._conn.ticket.component.getAll()
-        except xmlrpclib.ProtocolError,e:
-            raise TracError(e.errcode,e.errmsg)
+        return self._conn.ticket.component.getAll()
 
+    @catch_errors
     def available_actions(self, ticket_id):
         return self._conn.ticket.getActions(ticket_id)
 
+    @catch_errors
     def milestones(self):
         return self._conn.ticket.milestone.getAll()
 
+    @catch_errors
     def create(self, summary, description='', **options):
         ticket_id = self._conn.ticket.create(summary, description, options,
                                         True)
         return ticket_id
 
+    @catch_errors
     def get(self, ticket_id):
         ticket = self._conn.ticket.get(ticket_id)
         return TracTicket(self.config, *ticket)
 
+    @catch_errors
     def changelog(self, ticket_id):
         changelogs = self._conn.ticket.changeLog(ticket_id)
         return [changelog_factory(self.config, *cl) for cl in changelogs]
 
+    @catch_errors
     def update(self, ticket_id, comment, **options):
         ticket = self._conn.ticket.update(ticket_id, comment, options, True)
         return TracTicket(self.config, *ticket)
 
+    @catch_errors
     def query(self, *strfilters, **optfilters):
         filterlist = []
 
