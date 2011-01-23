@@ -37,6 +37,7 @@ setup(name='inigo.tracxmlrpc',
       install_requires=[
           'setuptools',
           'argparse',
+          'keyring'
           # -*- Extra requirements: -*-
       ],
       entry_points={

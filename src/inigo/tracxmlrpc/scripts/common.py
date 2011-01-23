@@ -3,6 +3,7 @@ import os
 import tempfile
 
 from argparse import ArgumentParser
+import keyring
 
 COLOR_MAP = {
    'red': 31,
@@ -13,6 +14,7 @@ COLOR_MAP = {
    'white': 1
 }
 
+KEYRING_SERVICE='inigo.tracxmlrpc.scripts'
 
 def indent(text):
     result = []
@@ -35,6 +37,16 @@ def editor_input(message):
 
     os.unlink(tmp)
     return ''.join(out)
+
+def get_auth(user, passwd):
+    if not user:
+        username = raw_input('Username: ')
+    if not passwd:
+        passwd = keyring.get_password(KEYRING_SERVICE, user)
+        if passwd is None:
+            passwd = getpass.getpass('Password: ')
+            keyring.set_password(KEYRING_SERVICE, user, passwd)
+    return user, passwd
 
 def selection_input(message,options):
     input = -1

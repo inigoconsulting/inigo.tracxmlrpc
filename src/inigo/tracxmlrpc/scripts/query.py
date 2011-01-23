@@ -1,10 +1,13 @@
 from inigo.tracxmlrpc.rpc import TracConfig, TracTicketXMLRPC
-from inigo.tracxmlrpc.scripts.common import indent, colored
+from inigo.tracxmlrpc.scripts.common import indent, colored, get_auth
 import getpass
+import keyring
 from argparse import ArgumentParser
 BASE="https://dev.inigo-tech.com/trac/%(project)s"
 
 ALL_TRACS=['startifact', 'clkss', 'nordicbet']
+
+KEYRING_SERVICE='inigo.tracxmlrpc.scripts'
 
 def get_parser():
     parser = ArgumentParser()
@@ -23,14 +26,7 @@ def main():
 
     args = parser.parse_args()
 
-    if args.username:
-        user = args.username
-    else:
-        user = raw_input('Username: ')
-    if args.password:
-        passwd = args.password
-    else:
-        passwd = getpass.getpass('Password: ')
+    user, passwd = get_auth(args.username, args.password)
 
     if args.project is None:
         render_all(user, passwd, args, ALL_TRACS)

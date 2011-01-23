@@ -7,7 +7,7 @@ import os
 import tempfile
 
 from inigo.tracxmlrpc.scripts.common import (editor_input, selection_input,
-                                            get_parser)
+                                            get_parser, get_auth)
 from inigo.tracxmlrpc.rpc import TracConfig, TracTicketXMLRPC
 
 def main():
@@ -18,15 +18,7 @@ def main():
     BASE="https://dev.inigo-tech.com/trac/%(project)s"
     project = args.project
     
-    if args.username:
-        user = args.username
-    else:
-        user = raw_input("Username: ")
-
-    if args.password:
-        passwd = args.password
-    else:
-        passwd = getpass.getpass("Password: ")
+    user, passwd = get_auth(args.username, args.password)
 
     conf = TracConfig(BASE % dict(project=project), user, passwd)
     ticket_server = TracTicketXMLRPC(conf)
